@@ -1,0 +1,37 @@
+.square-wrapper {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.square-color-grey {
+  background: grey;
+}
+
+.square-color-white {
+  background: white;
+}
+
+@mixin square-pawn() {
+  width: 30px;
+  height: 30px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+}
+
+.square-black-pawn {
+  @include square-pawn;
+  background: black;
+}
+
+.square-white-pawn {
+  @include square-pawn;
+  background: antiquewhite;
+}
+
+.square-possible-move {
+  border: solid 3px indianred;
+}
