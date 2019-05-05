@@ -6,13 +6,32 @@ import {PiecePosition} from '../piece/piece';
   providedIn: 'root'
 })
 export class PieceMoverService {
-  private subject = new Subject<PiecePosition>();
+  private subject = new Subject<PieceMover>();
 
   setPiece(pieceLocation: PiecePosition) {
-    this.subject.next(pieceLocation);
+    this.subject.next(new PieceMover(pieceLocation, PieceMoveStatus.SET));
   }
 
-  getPieceLocation(): Observable<PiecePosition> {
+  removePiece(pieceLocation: PiecePosition) {
+    this.subject.next(new PieceMover(pieceLocation, PieceMoveStatus.REMOVE));
+  }
+
+  getPieceLocation(): Observable<PieceMover> {
     return this.subject.asObservable();
   }
+}
+
+export class PieceMover {
+
+  piece: PiecePosition;
+  status: PieceMoveStatus;
+
+  constructor(piece: PiecePosition, status: PieceMoveStatus) {
+    this.piece = piece;
+    this.status = status;
+  }
+}
+
+export enum PieceMoveStatus {
+  REMOVE, SET
 }

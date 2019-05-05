@@ -1,13 +1,10 @@
 :host {
-  margin-top: 250px;
-  height: 400px;
-  width: 400px;
   display: flex;
-  flex-direction: column;
-  border: solid grey 3px;
+  align-items: center;
 }
 
 .board-column {
   display: flex;
   flex-direction: row;
 }
+

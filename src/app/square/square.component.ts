@@ -1,9 +1,11 @@
 import {Component, ElementRef, Input, OnDestroy, Renderer2, ViewChild} from '@angular/core';
-import {PieceMoverService} from '../board/piece.mover.service';
+import {PieceMoverService, PieceMoveStatus} from '../board/piece.mover.service';
 import {Subscription} from 'rxjs';
-import {PiecePosition, Player} from '../piece/piece';
+import {PiecePosition, Position} from '../piece/piece';
 import {shouldSquareHavePieceAtStart} from '../board/board.starter';
 import {ShowPossibleMovesService} from '../board/show.possible.moves.service';
+import {drawPieceOnBoard, removePieceFromBoard} from '../piece/piece.drawer';
+
 
 @Component({
   selector: 'app-square',
@@ -16,8 +18,7 @@ import {ShowPossibleMovesService} from '../board/show.possible.moves.service';
 })
 export class SquareComponent implements OnDestroy {
 
-  @Input() row: number;
-  @Input() column: number;
+  @Input() position: Position;
   @ViewChild('piece', {read: ElementRef}) pieceRef: ElementRef;
   @ViewChild('square', {read: ElementRef}) squareRef: ElementRef;
   pieceMoverSubscription: Subscription;
@@ -26,22 +27,12 @@ export class SquareComponent implements OnDestroy {
   constructor(private boardPieceMoverService: PieceMoverService,
               private showPossibleMovesService: ShowPossibleMovesService,
               private renderer: Renderer2) {
-    this.pieceMoverSubscription = boardPieceMoverService.getPieceLocation().subscribe(piece => {
-      this.putPieceOnBoard(piece);
-    });
-    this.showPossibleMovesSubscription = this.showPossibleMovesService.getPossiblePosition().subscribe(position => {
-      if (this.shouldChangeBeAppliedToThisSquare(position)) {
-        this.renderer.addClass(this.squareRef.nativeElement, 'square-possible-move');
-      }
-    });
-  }
-
-  static splitPiecePositionToColumnAndRow(piece: PiecePosition): string[] {
-    return piece.position.split('');
+    this.pieceMoverSubscription = boardPieceMoverService.getPieceLocation().subscribe(this.handlePieceMoveOnBoard());
+    this.showPossibleMovesSubscription = this.showPossibleMovesService.getPossiblePosition().subscribe(this.handleShowingPossibleMoves());
   }
 
   chooseColorOfSquare() {
-    if (shouldSquareHavePieceAtStart(this.row, this.column)) {
+    if (shouldSquareHavePieceAtStart(this.position)) {
       return 'square-color-grey';
     } else {
       return 'square-color-white';
@@ -49,13 +40,14 @@ export class SquareComponent implements OnDestroy {
   }
 
   putPieceOnBoard(piece: PiecePosition) {
-    const columnAndRow = SquareComponent.splitPiecePositionToColumnAndRow(piece);
-    if (this.shouldChangeBeAppliedToThisSquare(columnAndRow)) {
-      if (piece.piece.owner === Player.BLACK) {
-        this.renderer.addClass(this.pieceRef.nativeElement, 'square-black-pawn');
-      } else if (piece.piece.owner === Player.WHITE) {
-        this.renderer.addClass(this.pieceRef.nativeElement, 'square-white-pawn');
-      }
+    if (this.shouldChangeBeAppliedToThisSquare(piece.position)) {
+      drawPieceOnBoard(piece, this.renderer, this.pieceRef.nativeElement);
+    }
+  }
+
+  removePieceFromBoard(piece: PiecePosition) {
+    if (this.shouldChangeBeAppliedToThisSquare(piece.position)) {
+      removePieceFromBoard(piece, this.renderer, this.pieceRef.nativeElement);
     }
   }
 
@@ -64,7 +56,32 @@ export class SquareComponent implements OnDestroy {
     this.showPossibleMovesSubscription.unsubscribe();
   }
 
-  private shouldChangeBeAppliedToThisSquare(rowAndColumn) {
-    return rowAndColumn[0] === this.row.toString() && rowAndColumn[1] === this.column.toString();
+  private handleShowingPossibleMoves() {
+    return position => {
+      if (this.shouldChangeBeAppliedToThisSquare(position.position)) {
+        if (position.active) {
+          this.renderer.addClass(this.squareRef.nativeElement, 'square-possible-move');
+        } else {
+          this.renderer.removeClass(this.squareRef.nativeElement, 'square-possible-move');
+        }
+      }
+    };
+  }
+
+  private handlePieceMoveOnBoard() {
+    return piece => {
+      if (piece.status === PieceMoveStatus.SET) {
+        this.putPieceOnBoard(piece.piece);
+      } else if (piece.status === PieceMoveStatus.REMOVE) {
+        this.removePieceFromBoard(piece.piece);
+      }
+    };
+  }
+
+  private shouldChangeBeAppliedToThisSquare(position: Position): boolean {
+    if (position) {
+      return position.row === this.position.row && position.column === this.position.column;
+    }
+    return false;
   }
 }

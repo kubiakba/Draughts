@@ -18,11 +18,21 @@ export enum Player {
 
 export class PiecePosition {
 
-  position: string;
+  position: Position;
   piece: Piece;
 
-  constructor(position: string, piece: Piece) {
+  constructor(position: Position, piece: Piece) {
     this.position = position;
     this.piece = piece;
+  }
+}
+
+export class Position {
+  row: number;
+  column: number;
+
+  constructor(row: number, column: number) {
+    this.row = row;
+    this.column = column;
   }
 }

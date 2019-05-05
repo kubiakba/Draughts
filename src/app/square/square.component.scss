@@ -29,7 +29,17 @@
 
 .square-white-pawn {
   @include square-pawn;
-  background: antiquewhite;
+  background: white;
+}
+
+.square-black-dame {
+  @include square-pawn;
+  background: brown;
+}
+
+.square-white-dame {
+  @include square-pawn;
+  background: khaki;
 }
 
 .square-possible-move {
