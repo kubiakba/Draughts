@@ -14,12 +14,21 @@
   background: white;
 }
 
-@mixin square-pawn() {
-  width: 30px;
-  height: 30px;
+@mixin piece-radius($width, $height) {
+  width: $width;
+  height: $height;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
+}
+
+
+@mixin square-pawn() {
+  @include piece-radius(30px, 30px);
+}
+
+@mixin square-dame() {
+  @include piece-radius(40px, 40px);
 }
 
 .square-black-pawn {
@@ -33,13 +42,13 @@
 }
 
 .square-black-dame {
-  @include square-pawn;
-  background: brown;
+  @include square-dame;
+  background: black;
 }
 
 .square-white-dame {
-  @include square-pawn;
-  background: khaki;
+  @include square-dame;
+  background: white;
 }
 
 .square-possible-move {
