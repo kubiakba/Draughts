@@ -19,12 +19,12 @@ export function handleDecRowDecColumnBeating(positions: Map<Position, Piece>, cu
 }
 
 export function handleBeating(positions: Map<Position, Piece>, currentPositions: PiecePosition, possiblePositions: PossiblePositions, rowChange: number, columnChange: number) {
-  const newPosition = getPieceByPosition(positions, changePosition(currentPositions.position, rowChange, columnChange));
-  if (newPosition.piece && newPosition.piece.owner !== currentPositions.piece.owner) {
-    const pieceOnEdge = getPieceByPosition(positions,
+  const pieceInMiddleOfBeatPosition = getPieceByPosition(positions, changePosition(currentPositions.position, rowChange, columnChange));
+  if (pieceInMiddleOfBeatPosition.piece && pieceInMiddleOfBeatPosition.piece.owner !== currentPositions.piece.owner) {
+    const pieceOnFinishOfBeatPosition = getPieceByPosition(positions,
       changePosition(currentPositions.position, rowChange * 2, columnChange * 2));
-    if (!pieceOnEdge.piece && isPositionInBoard(pieceOnEdge.position)) {
-      possiblePositions.beatablePositions.push(pieceOnEdge.position);
+    if (!pieceOnFinishOfBeatPosition.piece && isPositionInBoard(pieceOnFinishOfBeatPosition.position)) {
+      possiblePositions.beatablePositions.push(pieceOnFinishOfBeatPosition.position);
     }
   }
 }
