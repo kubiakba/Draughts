@@ -1,5 +1,5 @@
 import {Component, ElementRef, Input, OnDestroy, Renderer2, ViewChild} from '@angular/core';
-import {PieceMoverService, PieceMoveStatus} from '../board/piece.mover.service';
+import {PieceMoverService, PieceMoveStatus} from '../piece/piece.mover.service';
 import {Subscription} from 'rxjs';
 import {PiecePosition, Position} from '../piece/piece';
 import {shouldSquareHavePieceAtStart} from '../board/board.starter';

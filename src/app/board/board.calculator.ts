@@ -1,5 +1,6 @@
 import {Piece, PiecePosition, PieceType, Player, Position} from '../piece/piece';
 import * as _ from 'underscore';
+import {getPieceInMiddlePosition} from './piece.in.middle.calculator';
 
 export function getPieceByPosition(positions: Map<Position, Piece>, position: Position): PiecePosition {
   const piece = positions.get(getPositionFromMap(positions, position));
@@ -26,51 +27,6 @@ export function isPositionInBoard(position: Position): boolean {
   const row = position.row;
   const column = position.column;
   return (row < 9 && row > 0 && column > 0 && column < 9);
-}
-
-export function getPieceInMiddlePosition(lastClickedPosition: Position, currentPosition: Position, map: Map<Position, Piece>): Position {
-  const lastClickedPiece = getPieceByPosition(map, lastClickedPosition);
-  let position: Position;
-  if (lastClickedPosition.row > currentPosition.row && lastClickedPosition.column > currentPosition.column) {
-    for (let index = 1; index < lastClickedPosition.row - currentPosition.row; index++) {
-      position = new Position(lastClickedPosition.row - index, lastClickedPosition.column - index);
-      const pieceInMiddle = getPieceByPosition(map, position);
-      if (!!pieceInMiddle.piece && pieceInMiddle.piece.owner !== lastClickedPiece.piece.owner) {
-        return position;
-      }
-    }
-
-  }
-  if (lastClickedPosition.row > currentPosition.row && lastClickedPosition.column < currentPosition.column) {
-    for (let index = 1; index < lastClickedPosition.row - currentPosition.row; index++) {
-      position = new Position(lastClickedPosition.row - index, lastClickedPosition.column + index);
-      const pieceInMiddle = getPieceByPosition(map, position);
-      if (!!pieceInMiddle.piece && pieceInMiddle.piece.owner !== lastClickedPiece.piece.owner) {
-        return position;
-      }
-    }
-
-  }
-  if (lastClickedPosition.row < currentPosition.row && lastClickedPosition.column > currentPosition.column) {
-    for (let index = 1; index < currentPosition.row - lastClickedPosition.row; index++) {
-      position = new Position(lastClickedPosition.row + index, lastClickedPosition.column - index);
-      const pieceInMiddle = getPieceByPosition(map, position);
-      if (!!pieceInMiddle.piece && pieceInMiddle.piece.owner !== lastClickedPiece.piece.owner) {
-        return position;
-      }
-    }
-
-  }
-  if (lastClickedPosition.row < currentPosition.row && lastClickedPosition.column < currentPosition.column) {
-    for (let index = 1; index < currentPosition.row - lastClickedPosition.row; index++) {
-      position = new Position(lastClickedPosition.row + index, lastClickedPosition.column + index);
-      const pieceInMiddle = getPieceByPosition(map, position);
-      if (!!pieceInMiddle.piece && pieceInMiddle.piece.owner !== lastClickedPiece.piece.owner) {
-        return position;
-      }
-    }
-
-  }
 }
 
 export function isMoveBeatable(lastClickedPosition: Position, currentPosition: Position, map: Map<Position, Piece>): boolean {

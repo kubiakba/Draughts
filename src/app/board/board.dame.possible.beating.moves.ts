@@ -27,7 +27,6 @@ export function createPossiblePositions(currentPosition: PiecePosition, changeVa
       column = changeValueForColumn(column);
     }
   } else {
-
     for (let i = currentPosition.position.row; i < edgeRow; i = changeValueForRow(i)) {
       const position = new Position(i, column);
       if (isPositionInBoard(position)) {
@@ -40,16 +39,16 @@ export function createPossiblePositions(currentPosition: PiecePosition, changeVa
 }
 
 function addFirstBeatingPosition(possibleDamePositions: Position[], positions: Map<Position, Piece>, currentPosition: PiecePosition, possiblePositions: PossiblePositions, rowChange: number, columnChange: number) {
-  const firstBeateableDamePosition = new PossiblePositions();
+  const firstBeatableDamePosition = new PossiblePositions();
   Array.from(possibleDamePositions)
     .filter(damePosition => !!!getPieceByPosition(positions, damePosition).piece || (damePosition.row === currentPosition.position.row))
     .map(damePosition => {
       const piece = getPieceByPosition(positions, currentPosition.position);
       piece.position = damePosition as Position;
-      handleBeating(positions, piece, firstBeateableDamePosition, rowChange, columnChange);
+      handleBeating(positions, piece, firstBeatableDamePosition, rowChange, columnChange);
     });
-  if (firstBeateableDamePosition.beatablePositions.length > 0) {
-    possiblePositions.beatablePositions.push(firstBeateableDamePosition.beatablePositions[0]);
+  if (firstBeatableDamePosition.beatablePositions.length > 0) {
+    possiblePositions.beatablePositions.push(firstBeatableDamePosition.beatablePositions[0]);
   }
 }
 

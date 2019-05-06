@@ -1,17 +1,11 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Piece, PiecePosition, Player, Position} from '../piece/piece';
-import {PieceMoverService} from './piece.mover.service';
+import {PieceMoverService} from '../piece/piece.mover.service';
 import {ShowPossibleMovesService} from './show.possible.moves.service';
 import {fulfillStartingPositionMap} from './board.starter';
-import {
-  getPieceByPosition,
-  getPieceInMiddlePosition,
-  getPositionFromArray,
-  getPositionFromMap,
-  setNewPieceByPosition,
-  isMoveBeatable
-} from './board.calculator';
-import {getActivePlayerBeatingPositions, calculatePossiblePositions} from './board.mover.calculator';
+import {getPieceByPosition, getPositionFromArray, getPositionFromMap, isMoveBeatable, setNewPieceByPosition} from './board.calculator';
+import {calculatePossiblePositions, getActivePlayerBeatingPositions} from './board.mover.calculator';
+import {getPieceInMiddlePosition} from './piece.in.middle.calculator';
 
 @Component({
   selector: 'app-board',
