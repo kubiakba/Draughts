@@ -9,13 +9,16 @@ import {changePosition, getPositionFromMap, isPositionInBoard} from './board.cal
 import {handleBeatingPossibleMovesForDame} from './board.dame.possible.beating.moves';
 import {handlePossibleMovesForDame} from './board.dame.possible.moves';
 
-export function getActivePlayerBeatingPositions(positions: Map<Position, Piece>, currentPosition: PiecePosition): Position[] {
+function removeCurrentPosition(positions: Map<Position, Piece>, currentPosition: PiecePosition) {
   const map: Map<Position, Piece> = new Map(positions);
   map.delete(getPositionFromMap(positions, currentPosition.position));
+  return map;
+}
+
+export function getActivePlayerBeatingPositions(positions: Map<Position, Piece>, currentPosition: PiecePosition): Position[] {
+  const map = removeCurrentPosition(positions, currentPosition);
   return Array.from(map.keys())
-    .map(key => {
-      return [key, positions.get(key)] as [Position, Piece];
-    })
+    .map(key => [key, positions.get(key)] as [Position, Piece])
     .filter(entry => entry[1].owner === currentPosition.piece.owner)
     .map(entry => calculatePossiblePositions(positions, new PiecePosition(entry[0], entry[1])))
     .map(entry => entry.beatablePositions)

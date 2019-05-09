@@ -3,9 +3,15 @@ import {Piece, PiecePosition, Player, Position} from '../piece/piece';
 import {PieceMoverService} from '../piece/piece.mover.service';
 import {ShowPossibleMovesService} from './show.possible.moves.service';
 import {fulfillStartingPositionMap} from './board.starter';
-import {getPieceByPosition, getPositionFromArray, getPositionFromMap, isMoveBeatable, setNewPieceByPosition} from './board.calculator';
+import {
+  getPieceByPosition,
+  getPieceInMiddlePosition,
+  getPositionFromArray,
+  getPositionFromMap,
+  isMoveBeatable,
+  setNewPieceByPosition
+} from './board.calculator';
 import {calculatePossiblePositions, getActivePlayerBeatingPositions} from './board.mover.calculator';
-import {getPieceInMiddlePosition} from './piece.in.middle.calculator';
 
 @Component({
   selector: 'app-board',
@@ -142,8 +148,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
   private handlePossibleMoves(movedPieceInfo, position: Position) {
     if ((!movedPieceInfo.wasMoved)) {
       this.drawPossibleMoves(position);
-    } else if (movedPieceInfo.wasBeatable &&
-      calculatePossiblePositions(this.map, getPieceByPosition(this.map, position)).beatablePositions.length > 0) {
+    } else if (movedPieceInfo.wasBeatable && calculatePossiblePositions(this.map, getPieceByPosition(this.map, position)).beatablePositions.length > 0) {
       this.drawPossibleMoves(position);
     }
   }
@@ -161,8 +166,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
 
   private handleChangePlayer(movedPieceInfo: PieceMoveInfo, position: Position) {
-    if ((movedPieceInfo.wasMoved && !movedPieceInfo.wasBeatable)
-      || movedPieceInfo.wasMoved && movedPieceInfo.wasBeatable
+    if ((movedPieceInfo.wasMoved && !movedPieceInfo.wasBeatable) || movedPieceInfo.wasMoved && movedPieceInfo.wasBeatable
       && calculatePossiblePositions(this.map, getPieceByPosition(this.map, position)).beatablePositions.length === 0) {
       this.changeActivePlayer();
     }

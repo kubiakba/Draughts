@@ -15,36 +15,45 @@ export function decrementValue(input: number): number {
   return input - 1;
 }
 
+function addPosition(row: number, column: number, positions: Position[]) {
+  const position = new Position(row, column);
+  if (isPositionInBoard(position)) {
+    positions.push(position);
+  }
+}
+
 export function createPossiblePositions(currentPosition: PiecePosition, changeValueForRow: ChangeValue, changeValueForColumn: ChangeValue, edgeRow: number): Position[] {
   const positions: Position[] = [];
   let column = currentPosition.position.column;
   if (edgeRow === MIN_ROW) {
     for (let i = currentPosition.position.row; i > edgeRow; i = changeValueForRow(i)) {
-      const position = new Position(i, column);
-      if (isPositionInBoard(position)) {
-        positions.push(position);
-      }
+      addPosition(i, column, positions);
       column = changeValueForColumn(column);
     }
-  } else {
+  } else if (edgeRow === MAX_ROW) {
     for (let i = currentPosition.position.row; i < edgeRow; i = changeValueForRow(i)) {
-      const position = new Position(i, column);
-      if (isPositionInBoard(position)) {
-        positions.push(position);
-      }
+      addPosition(i, column, positions);
       column = changeValueForColumn(column);
     }
   }
   return positions;
 }
 
-function addFirstBeatingPosition(possibleDamePositions: Position[], positions: Map<Position, Piece>, currentPosition: PiecePosition, possiblePositions: PossiblePositions, rowChange: number, columnChange: number) {
+function isNoPieceOnPosition(positions: Map<Position, Piece>, damePosition, currentPosition: PiecePosition) {
+  return !!!getPieceByPosition(positions, damePosition).piece || (damePosition.row === currentPosition.position.row);
+}
+
+function createPieceWithNewPosition(positions: Map<Position, Piece>, currentPosition: PiecePosition, damePosition: Position) {
+  const piece = getPieceByPosition(positions, currentPosition.position);
+  return new PiecePosition(damePosition, piece.piece);
+}
+
+function addFirstBeatingPositionForDame(possibleDamePositions: Position[], positions: Map<Position, Piece>, currentPosition: PiecePosition, possiblePositions: PossiblePositions, rowChange: number, columnChange: number) {
   const firstBeatableDamePosition = new PossiblePositions();
   Array.from(possibleDamePositions)
-    .filter(damePosition => !!!getPieceByPosition(positions, damePosition).piece || (damePosition.row === currentPosition.position.row))
-    .map(damePosition => {
-      const piece = getPieceByPosition(positions, currentPosition.position);
-      piece.position = damePosition as Position;
+    .filter(damePosition => isNoPieceOnPosition(positions, damePosition, currentPosition))
+    .forEach(damePosition => {
+      const piece = createPieceWithNewPosition(positions, currentPosition, damePosition);
       handleBeating(positions, piece, firstBeatableDamePosition, rowChange, columnChange);
     });
   if (firstBeatableDamePosition.beatablePositions.length > 0) {
@@ -52,29 +61,29 @@ function addFirstBeatingPosition(possibleDamePositions: Position[], positions: M
   }
 }
 
-function handleContinuousIncRowIncColumnBeating(positions: Map<Position, Piece>, currentPosition: PiecePosition, possiblePositions: PossiblePositions) {
+function handleContinuousIncRowIncColumnBeatingForDame(positions: Map<Position, Piece>, currentPosition: PiecePosition, possiblePositions: PossiblePositions) {
   const possibleDamePositions: Position[] = createPossiblePositions(currentPosition, incrementValue, incrementValue, MAX_ROW);
-  addFirstBeatingPosition(possibleDamePositions, positions, currentPosition, possiblePositions, 1, 1);
+  addFirstBeatingPositionForDame(possibleDamePositions, positions, currentPosition, possiblePositions, 1, 1);
 }
 
-function handleContinuousIncRowDecColumnBeating(positions: Map<Position, Piece>, currentPosition: PiecePosition, possiblePositions: PossiblePositions) {
+function handleContinuousIncRowDecColumnBeatingForDame(positions: Map<Position, Piece>, currentPosition: PiecePosition, possiblePositions: PossiblePositions) {
   const possibleDamePositions = createPossiblePositions(currentPosition, incrementValue, decrementValue, MAX_ROW);
-  addFirstBeatingPosition(possibleDamePositions, positions, currentPosition, possiblePositions, 1, -1);
+  addFirstBeatingPositionForDame(possibleDamePositions, positions, currentPosition, possiblePositions, 1, -1);
 }
 
-function handleContinuousDecRowIncColumnBeating(positions: Map<Position, Piece>, currentPosition: PiecePosition, possiblePositions: PossiblePositions) {
+function handleContinuousDecRowIncColumnBeatingForDame(positions: Map<Position, Piece>, currentPosition: PiecePosition, possiblePositions: PossiblePositions) {
   const possibleDamePositions = createPossiblePositions(currentPosition, decrementValue, incrementValue, MIN_ROW);
-  addFirstBeatingPosition(possibleDamePositions, positions, currentPosition, possiblePositions, -1, 1);
+  addFirstBeatingPositionForDame(possibleDamePositions, positions, currentPosition, possiblePositions, -1, 1);
 }
 
-function handleContinuousDecRowDecColumnBeating(positions: Map<Position, Piece>, currentPosition: PiecePosition, possiblePositions: PossiblePositions) {
+function handleContinuousDecRowDecColumnBeatingForDame(positions: Map<Position, Piece>, currentPosition: PiecePosition, possiblePositions: PossiblePositions) {
   const possibleDamePositions = createPossiblePositions(currentPosition, decrementValue, decrementValue, MIN_ROW);
-  addFirstBeatingPosition(possibleDamePositions, positions, currentPosition, possiblePositions, -1, -1);
+  addFirstBeatingPositionForDame(possibleDamePositions, positions, currentPosition, possiblePositions, -1, -1);
 }
 
 export function handleBeatingPossibleMovesForDame(positions: Map<Position, Piece>, currentPosition: PiecePosition, possiblePositions: PossiblePositions) {
-  handleContinuousIncRowIncColumnBeating(positions, currentPosition, possiblePositions);
-  handleContinuousIncRowDecColumnBeating(positions, currentPosition, possiblePositions);
-  handleContinuousDecRowIncColumnBeating(positions, currentPosition, possiblePositions);
-  handleContinuousDecRowDecColumnBeating(positions, currentPosition, possiblePositions);
+  handleContinuousIncRowIncColumnBeatingForDame(positions, currentPosition, possiblePositions);
+  handleContinuousIncRowDecColumnBeatingForDame(positions, currentPosition, possiblePositions);
+  handleContinuousDecRowIncColumnBeatingForDame(positions, currentPosition, possiblePositions);
+  handleContinuousDecRowDecColumnBeatingForDame(positions, currentPosition, possiblePositions);
 }
