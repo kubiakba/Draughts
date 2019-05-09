@@ -1,6 +1,5 @@
 import {Piece, PiecePosition, Position} from '../piece/piece';
-import {changePosition, getPieceByPosition, isPositionInBoard} from './board.calculator';
-import {PossiblePositions} from './board.mover.calculator';
+import {changePosition, getPieceByPosition, isPositionInBoard, PossiblePositions} from './board.calculator';
 
 export function handleIncRowIncColumnBeating(positions: Map<Position, Piece>, currentPositions: PiecePosition, possiblePositions: PossiblePositions) {
   handleBeating(positions, currentPositions, possiblePositions, 1, 1);

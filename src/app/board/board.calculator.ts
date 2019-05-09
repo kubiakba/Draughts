@@ -81,3 +81,8 @@ export function getPieceInMiddlePosition(lastClickedPosition: Position, currentP
 function arePieceOwnersDifferent(pieceInMiddle: PiecePosition, lastClickedPiece: PiecePosition) {
   return !!pieceInMiddle.piece && pieceInMiddle.piece.owner !== lastClickedPiece.piece.owner;
 }
+
+export class PossiblePositions {
+  positions: Position[] = [];
+  beatablePositions: Position[] = [];
+}

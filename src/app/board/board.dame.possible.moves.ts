@@ -1,7 +1,6 @@
 import {Piece, PiecePosition, Position} from '../piece/piece';
-import {PossiblePositions} from './board.mover.calculator';
 import {ChangeValue, createPossiblePositions, decrementValue, incrementValue, MAX_ROW, MIN_ROW} from './board.dame.possible.beating.moves';
-import {getPieceByPosition} from './board.calculator';
+import {getPieceByPosition, PossiblePositions} from './board.calculator';
 
 function addAllPositionsIfNoObstacleOccur(possibleDamePositions: Position[], possiblePositions: PossiblePositions) {
   Array.from(possibleDamePositions).forEach(position => {

@@ -5,7 +5,7 @@ import {
   handleIncRowDecColumnBeating,
   handleIncRowIncColumnBeating
 } from './board.beating.calculator';
-import {changePosition, getPositionFromMap, isPositionInBoard} from './board.calculator';
+import {changePosition, getPositionFromMap, isPositionInBoard, PossiblePositions} from './board.calculator';
 import {handleBeatingPossibleMovesForDame} from './board.dame.possible.beating.moves';
 import {handlePossibleMovesForDame} from './board.dame.possible.moves';
 
@@ -92,10 +92,5 @@ function handlePossibleMoves(positions: Map<Position, Piece>, currentPosition: P
   if (!getPositionFromMap(positions, changedPosition) && isPositionInBoard(changedPosition)) {
     possiblePositions.positions.push(changedPosition);
   }
-}
-
-export class PossiblePositions {
-  positions: Position[] = [];
-  beatablePositions: Position[] = [];
 }
 

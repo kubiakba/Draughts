@@ -1,7 +1,6 @@
 import {Piece, PiecePosition, Position} from '../piece/piece';
-import {PossiblePositions} from './board.mover.calculator';
 import {handleBeating} from './board.beating.calculator';
-import {getPieceByPosition, isPositionInBoard} from './board.calculator';
+import {getPieceByPosition, isPositionInBoard, PossiblePositions} from './board.calculator';
 
 export type ChangeValue = (input: number) => number;
 export const MAX_ROW = 9;
