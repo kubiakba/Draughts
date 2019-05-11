@@ -12,6 +12,8 @@ import {
   setNewPieceByPosition
 } from './board.calculator';
 import {calculatePossiblePositions, getActivePlayerBeatingPositions} from './board.mover.calculator';
+import {WinningInfoComponent} from '../winning-info/winning-info.component';
+import {PopupShower} from '../popup-shower/popup-shower';
 
 @Component({
   selector: 'app-board',
@@ -36,7 +38,8 @@ export class BoardComponent implements OnInit, AfterViewInit {
   lastShownPossiblePositions: Position[] = [];
 
   constructor(private pieceMoverService: PieceMoverService,
-              private showPossibleMovesService: ShowPossibleMovesService) {
+              private showPossibleMovesService: ShowPossibleMovesService,
+              private popupShower: PopupShower) {
   }
 
   ngOnInit(): void {
@@ -57,19 +60,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
       this.handlePossibleMoves(movedPieceInfo, position);
       this.handleChangePlayer(movedPieceInfo, position);
     }
-  }
-
-  private isAllowToMove(position: Position) {
-    const firstCondition = this.isActivePlayerPiece(position);
-    const secondCondition = this.lastClickedPosition
-      && getPieceByPosition(this.map, this.lastClickedPosition).piece.owner === this.activePlayer
-      && getPositionFromArray(this.lastShownPossiblePositions, position);
-    return firstCondition || secondCondition;
-  }
-
-  private isActivePlayerPiece(position: Position): boolean {
-    const piece = getPieceByPosition(this.map, position);
-    return piece.piece && piece.piece.owner === this.activePlayer;
+    this.handleEndGame();
   }
 
   shouldPieceBeMoved(position: Position): PieceMoveInfo {
@@ -81,20 +72,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
       return new PieceMoveInfo(true, wasBeatable);
     }
     return new PieceMoveInfo(false, false);
-  }
-
-  private isMovePossible(position: Position) {
-    return getPositionFromArray(this.lastShownPossiblePositions, position);
-  }
-
-  private removeOldPieceFromBoard() {
-    this.pieceMoverService.removePiece(getPieceByPosition(this.map, this.lastClickedPosition));
-    this.removePositionFromBoard(this.lastClickedPosition);
-  }
-
-  private setNewPieceOnBoard(newPiecePosition: PiecePosition, position: Position) {
-    this.pieceMoverService.setPiece(newPiecePosition);
-    this.map.set(position, newPiecePosition.piece);
   }
 
   tryToBeatPiece(position: Position): boolean {
@@ -119,6 +96,41 @@ export class BoardComponent implements OnInit, AfterViewInit {
     }
   }
 
+  clearLastPossibleMoves(position: Position) {
+    this.lastClickedPosition = position;
+    this.lastShownPossiblePositions.forEach(singlePosition => {
+      this.showPossibleMovesService.removePossiblePosition(singlePosition);
+    });
+    this.lastShownPossiblePositions = [];
+  }
+
+  private isAllowToMove(position: Position) {
+    const firstCondition = this.isActivePlayerPiece(position);
+    const secondCondition = this.lastClickedPosition
+      && getPieceByPosition(this.map, this.lastClickedPosition).piece.owner === this.activePlayer
+      && getPositionFromArray(this.lastShownPossiblePositions, position);
+    return firstCondition || secondCondition;
+  }
+
+  private isActivePlayerPiece(position: Position): boolean {
+    const piece = getPieceByPosition(this.map, position);
+    return piece.piece && piece.piece.owner === this.activePlayer;
+  }
+
+  private isMovePossible(position: Position) {
+    return getPositionFromArray(this.lastShownPossiblePositions, position);
+  }
+
+  private removeOldPieceFromBoard() {
+    this.pieceMoverService.removePiece(getPieceByPosition(this.map, this.lastClickedPosition));
+    this.removePositionFromBoard(this.lastClickedPosition);
+  }
+
+  private setNewPieceOnBoard(newPiecePosition: PiecePosition, position: Position) {
+    this.pieceMoverService.setPiece(newPiecePosition);
+    this.map.set(position, newPiecePosition.piece);
+  }
+
   private drawNonBeatableMoves(possiblePositions) {
     possiblePositions.positions.forEach(singlePosition => {
       this.lastShownPossiblePositions.push(singlePosition);
@@ -131,14 +143,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
       this.lastShownPossiblePositions.push(singlePosition);
       this.showPossibleMovesService.showPossiblePosition(singlePosition);
     });
-  }
-
-  clearLastPossibleMoves(position: Position) {
-    this.lastClickedPosition = position;
-    this.lastShownPossiblePositions.forEach(singlePosition => {
-      this.showPossibleMovesService.removePossiblePosition(singlePosition);
-    });
-    this.lastShownPossiblePositions = [];
   }
 
   private removePositionFromBoard(positionToRemove: Position) {
@@ -179,6 +183,16 @@ export class BoardComponent implements OnInit, AfterViewInit {
       this.activePlayer = Player.BLACK;
     }
   }
+
+  private handleEndGame() {
+    const blackPlayer = Array.from(this.map.values()).find(piece => piece.owner === Player.BLACK);
+    const whitePlayer = Array.from(this.map.values()).find(piece => piece.owner === Player.WHITE);
+    if (!!!blackPlayer) {
+      this.popupShower.add(WinningInfoComponent, {inputs: [{value: ['winningPlayer', Player[Player.WHITE]]}], outputs: []});
+    } else if (!!!whitePlayer) {
+      this.popupShower.add(WinningInfoComponent, {inputs: [{value: ['winningPlayer', Player[Player.BLACK]]}], outputs: []});
+    }
+  }
 }
 
 export class PieceMoveInfo {
@@ -189,5 +203,4 @@ export class PieceMoveInfo {
     this.wasMoved = wasMoved;
     this.wasBeatable = wasBeatable;
   }
-
 }
