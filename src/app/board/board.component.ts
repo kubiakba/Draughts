@@ -117,6 +117,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     Array.from(this.map.keys()).forEach(position => this.pieceMoverService.removePiece(getPieceByPosition(this.map, position)));
     this.map = fulfillStartingPositionMap();
     this.activePlayer = Player.WHITE;
+    this.lastClickedPosition = undefined;
     this.drawPiecesOnBoard();
   }
 
@@ -128,9 +129,12 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private isAllowToMove(position: Position) {
     const firstCondition = this.isActivePlayerPiece(position);
-    const secondCondition = this.lastClickedPosition
-      && getPieceByPosition(this.map, this.lastClickedPosition).piece.owner === this.activePlayer
-      && getPositionFromArray(this.lastShownPossiblePositions, position);
+    let secondCondition = false;
+    if (!!this.lastClickedPosition) {
+      secondCondition = this.lastClickedPosition
+        && getPieceByPosition(this.map, this.lastClickedPosition).piece.owner === this.activePlayer
+        && !!getPositionFromArray(this.lastShownPossiblePositions, position);
+    }
     return firstCondition || secondCondition;
   }
 
