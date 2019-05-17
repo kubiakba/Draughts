@@ -2,6 +2,12 @@
 
 ##### Simple and enjoyable game for everyone
 
-![](./images/draughts.png)
-![](./images/middle_of_game.png)
-![](./images/end_of_game.png)
+<p align="center"> 
+<img src="./images/draughts.png">
+</p>
+<p align="center"> 
+<img src="./images/middle_of_game.png">
+</p>
+<p align="center"> 
+<img src="./images/end_of_game.png">
+</p>
