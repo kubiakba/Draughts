@@ -8,18 +8,10 @@
   display: none;
 }
 
-.show {
-  display: block;
-}
-
 #modal-container {
   position: fixed;
-  top: 300px;
-  left: 50%;
-  width: 375px;
-  background: white;
-  margin-left: -187.5px;
-  text-align: center;
+  height: 100%;
+  width: 100%;
   box-shadow: 0 0 2px 1px black;
   z-index: 100;
 }

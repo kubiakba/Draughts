@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {Piece, PiecePosition, Player, Position} from '../piece/piece';
 import {PieceMoverService} from '../piece/piece.mover.service';
 import {ShowPossibleMovesService} from './show.possible.moves.service';
@@ -14,6 +14,8 @@ import {
 import {calculatePossiblePositions, getActivePlayerBeatingPositions} from './board.mover.calculator';
 import {WinningInfoComponent} from '../winning-info/winning-info.component';
 import {PopupShower} from '../popup-shower/popup-shower';
+import {StartNewGame} from './start.new.game';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-board',
@@ -29,27 +31,30 @@ import {PopupShower} from '../popup-shower/popup-shower';
     </div>`,
   styleUrls: ['./board.component.css']
 })
-export class BoardComponent implements OnInit, AfterViewInit {
+export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   positions: number[] = [1, 2, 3, 4, 5, 6, 7, 8];
   map = new Map<Position, Piece>();
   activePlayer: Player = Player.WHITE;
   lastClickedPosition: Position;
   lastShownPossiblePositions: Position[] = [];
+  startNewGameSubscription: Subscription;
 
   constructor(private pieceMoverService: PieceMoverService,
               private showPossibleMovesService: ShowPossibleMovesService,
-              private popupShower: PopupShower) {
+              private popupShower: PopupShower,
+              private startNewGame: StartNewGame) {
   }
 
   ngOnInit(): void {
     this.map = fulfillStartingPositionMap();
+    this.startNewGameSubscription = this.startNewGame.getObservable().subscribe(() => {
+      this.prepareForNewGame();
+    });
   }
 
   ngAfterViewInit(): void {
-    Array.from(this.map.keys()).forEach(key => {
-      this.pieceMoverService.setPiece(new PiecePosition(key, this.map.get(key)));
-    });
+    this.drawPiecesOnBoard();
   }
 
   performAction(row: number, column: number) {
@@ -102,6 +107,23 @@ export class BoardComponent implements OnInit, AfterViewInit {
       this.showPossibleMovesService.removePossiblePosition(singlePosition);
     });
     this.lastShownPossiblePositions = [];
+  }
+
+  ngOnDestroy(): void {
+    this.startNewGameSubscription.unsubscribe();
+  }
+
+  private prepareForNewGame() {
+    Array.from(this.map.keys()).forEach(position => this.pieceMoverService.removePiece(getPieceByPosition(this.map, position)));
+    this.map = fulfillStartingPositionMap();
+    this.activePlayer = Player.WHITE;
+    this.drawPiecesOnBoard();
+  }
+
+  private drawPiecesOnBoard() {
+    Array.from(this.map.keys()).forEach(key => {
+      this.pieceMoverService.setPiece(new PiecePosition(key, this.map.get(key)));
+    });
   }
 
   private isAllowToMove(position: Position) {

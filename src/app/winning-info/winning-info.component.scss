@@ -1,5 +1,29 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
 .winning-popup-info {
-  height: 200px;
-  width: 375px;
-  background: green;
+  background: coral;
+  box-shadow: 0 0 2px 1px black;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+.winning-popup-info-winner {
+  text-align: center;
+  padding: 10px 0 10px 0;
+}
+
+.popup-winning-popup-play-again-button {
+  background-color: dimgray;
+  border: none;
+  color: white;
+  text-align: center;
+  padding: 15px 32px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
 }

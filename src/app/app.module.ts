@@ -5,6 +5,7 @@ import {AppComponent} from './app.component';
 import {SquareComponent} from './square/square.component';
 import {BoardComponent} from './board/board.component';
 import {WinningInfoComponent} from './winning-info/winning-info.component';
+import {PopupInjector} from './component-injector/popup-injector.service';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,7 @@ import {WinningInfoComponent} from './winning-info/winning-info.component';
     BrowserModule
   ],
   entryComponents: [WinningInfoComponent],
-  providers: [],
+  providers: [PopupInjector],
   bootstrap: [AppComponent]
 })
 export class AppModule {
