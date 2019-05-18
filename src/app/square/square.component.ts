@@ -2,8 +2,8 @@ import {Component, ElementRef, Input, OnDestroy, Renderer2, ViewChild} from '@an
 import {PieceMoverService, PieceMoveStatus} from '../piece/piece.mover.service';
 import {Subscription} from 'rxjs';
 import {PiecePosition, Position} from '../piece/piece';
-import {shouldSquareHavePieceAtStart} from '../board/board.starter';
-import {ShowPossibleMovesService} from '../board/show.possible.moves.service';
+import {shouldSquareHavePieceAtStart} from '../board-utils/board.starter';
+import {ShowPossibleMovesService} from '../board-utils/show.possible.moves.service';
 import {drawPieceOnBoard, removePieceFromBoard} from '../piece/piece.drawer';
 
 

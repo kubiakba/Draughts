@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {PopupShower} from '../popup-shower/popup-shower';
+import {PopupShower} from '../popup-injector/popup-shower';
 
 @Component({
   selector: 'app-winning-info',
