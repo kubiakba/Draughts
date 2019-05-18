@@ -1,8 +1,8 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {Piece, PiecePosition, Player, Position} from '../piece/piece';
 import {PieceMoverService} from '../piece/piece.mover.service';
-import {ShowPossibleMovesService} from './show.possible.moves.service';
-import {fulfillStartingPositionMap} from './board.starter';
+import {ShowPossibleMovesService} from '../board-utils/show.possible.moves.service';
+import {fulfillStartingPositionMap} from '../board-utils/board.starter';
 import {
   getPieceByPosition,
   getPieceInMiddlePosition,
@@ -10,11 +10,11 @@ import {
   getPositionFromMap,
   isMoveBeatable,
   setNewPieceByPosition
-} from './board.calculator';
-import {calculatePossiblePositions, getActivePlayerBeatingPositions} from './board.mover.calculator';
+} from '../board-utils/board.calculator';
+import {calculatePossiblePositions, getActivePlayerBeatingPositions} from '../board-utils/board.mover.calculator';
 import {WinningInfoComponent} from '../winning-info/winning-info.component';
-import {PopupShower} from '../popup-shower/popup-shower';
-import {StartNewGame} from './start.new.game';
+import {PopupShower} from '../popup-injector/popup-shower';
+import {StartNewGame} from '../board-utils/start.new.game';
 import {Subscription} from 'rxjs';
 
 @Component({
